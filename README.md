@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧱 Tech Doc Builder – Frontend
 
-## Getting Started
+**Tech Doc Builder** est une application web construite avec **Next.js (App Router)**, **TailwindCSS** et **TypeScript**, visant à automatiser la création et la gestion de documents techniques.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Stack Technique
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Outil | Rôle |
+|--------|------|
+| [Next.js 14+](https://nextjs.org/) | Framework React (App Router, Server Actions, SSR) |
+| [TailwindCSS v4](https://tailwindcss.com/) | Design system utilitaire |
+| [Supabase](https://supabase.com/) *(optionnel)* | Authentification & base de données hébergée |
+| [TypeScript](https://www.typescriptlang.org/) | Typage statique |
+| [shadcn/ui](https://ui.shadcn.com/) | Composants UI réutilisables |
+| [Zustand](https://zustand-demo.pmnd.rs/) *(optionnel)* | Gestion d’état légère |
+| [Zod](https://zod.dev/) | Validation et schémas de données |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏗️ Structure du projet
 
-## Learn More
+techdoc-builder/
+├─ app/                     # Routing principal (Next.js App Router)
+│ ├─ (marketing)/           # Pages publiques
+│ ├─ (auth)/                # Authentification (login/register)
+│ ├─ (app)/                 # Espace connecté
+│ │ ├─ dashboard/
+│ │ └─ projects/
+│ ├─ layout.tsx             # Layout racine
+│ ├─ globals.css            # Styles globaux
+│ └─ not-found.tsx          # Page 404
+│
+├─ features/                # Dossiers métiers (feature-based)
+│ ├─ auth/
+│ │ ├─ components/
+│ │ ├─ hooks/
+│ │ ├─ services/
+│ │ └─ types.ts
+│ ├─ projects/
+│ └─ documents/
+│
+├─ components/              # UI réutilisable
+│ ├─ ui/                    # Design system (bouton, input, card, etc.)
+│ ├─ layout/                # Layout global (header, sidebar)
+│ └─ charts/                # Composants graphiques
+│
+├─ lib/                     # Utilitaires framework/infra
+│ ├─ supabaseClient.ts      # Configuration Supabase (client/SSR)
+│ ├─ fetcher.ts             # Wrapper fetch API
+│ ├─ env.ts                 # Validation des variables d’env
+│ └─ logger.ts
+│
+├─ server/                  # Server actions & services backend
+│ ├─ actions/               # Actions server-side (mutations)
+│ └─ services/              # Appels DB / API externes
+│
+├─ store/                   # État global (Zustand ou Jotai)
+│
+├─ hooks/                   # Hooks réutilisables (useMediaQuery, etc.)
+│
+├─ utils/                   # Fonctions pures utilitaires
+│ ├─ cn.ts                  # Helper className()
+│ └─ date.ts
+│
+├─ styles/                  # Feuilles de style additionnelles
+│
+├─ public/                  # Fichiers statiques (images, icons)
+│
+├─ types/                   # Types globaux
+│
+├─ .env                     # Variables d’environnement
+├─ .env.example             # Example de variables d’environnement
+├─ tailwind.config.ts
+├─ postcss.config.js
+├─ next.config.ts
+├─ tsconfig.json
+└─ package.json
 
-To learn more about Next.js, take a look at the following resources:
+## ⚙️ Scripts NPM
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Commande | Description |
+|-----------|-------------|
+| `npm run dev` | Lance le serveur de dev |
+| `npm run build` | Compile le projet pour la prod |
+| `npm run start` | Démarre le serveur en mode prod |
+| `npm run lint` | Analyse le code (ESLint) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔑 Variables d’environnement
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Créer un fichier `.env` à la racine en suivant la structure dans .env.example
