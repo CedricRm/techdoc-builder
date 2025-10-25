@@ -1,4 +1,4 @@
-import { supabaseBrowser } from "@/lib/supabaseClient";
+import { supabaseBrowser } from "@/lib/supabaseClient.browser";
 
 const supabase = supabaseBrowser();
 

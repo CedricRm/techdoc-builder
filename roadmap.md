@@ -2,6 +2,6 @@
 [X] Installer TailwindCSS
 [X] Créer la structure de dossiers
 [X] Ajouter le design system (components/ui)
-[] Implémenter les routes (auth) et (app)
-[] Configurer Supabase pour l’authentification
+[X] Implémenter les routes (auth) et (app)
+[X] Configurer Supabase pour l’authentification
 [] Ajouter le dashboard principal

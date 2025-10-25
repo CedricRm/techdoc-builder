@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/lib/supabaseClient";
+import { supabaseServer } from "@/lib/supabaseClient.server";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {

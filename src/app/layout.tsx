@@ -1,3 +1,4 @@
+import "./globals.css";
 export const metadata = { title: "Tech Doc Builder" };
 
 export default function RootLayout({
