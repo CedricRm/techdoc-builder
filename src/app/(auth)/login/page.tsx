@@ -32,7 +32,7 @@ export default function LoginPage() {
     }
 
     // ✅ Connexion réussie → on redirige
-    router.push("/app/dashboard");
+    router.push("/dashboard");
   };
 
   return (
