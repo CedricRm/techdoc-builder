@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createLogger } from "@/lib/logger";
 
 export function supabaseServer() {
   const cookieStore = cookies();
@@ -23,15 +24,15 @@ export function supabaseServer() {
         }));
       },
       setAll(
-        _cookiesToSet: Array<{
+        /* istanbul ignore next */ _cookiesToSet: Array<{
           name: string;
           value: string;
           options?: Record<string, unknown>;
         }>
       ) {
-        console.warn(
-          "Setting cookies on server is not supported in this context."
-        );
+        const log = createLogger("supabase.server");
+        void _cookiesToSet;
+        log.warn("Setting cookies on server is not supported in this context.");
       },
     },
   });

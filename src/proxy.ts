@@ -1,11 +1,13 @@
 // proxy.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "./lib/supabaseClient.server";
+import { createLogger } from "@/lib/logger";
 
 export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
 
   const supabase = supabaseServer();
+  const log = createLogger("proxy");
 
   const {
     data: { user },
@@ -33,7 +35,12 @@ export async function proxy(req: NextRequest) {
   // Public auth routes behavior
   if (isPublic) {
     // If already logged in, keep users out of auth pages
-    if (user) return NextResponse.redirect(new URL("/dashboard", req.url));
+    if (user) {
+      log.info("Redirecting authenticated user away from public auth route", {
+        path,
+      });
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
     // Not logged in: allow
     return res;
   }
@@ -42,6 +49,7 @@ export async function proxy(req: NextRequest) {
   if (!user) {
     const url = new URL("/login", req.url);
     url.searchParams.set("redirectedTo", path);
+    log.info("Redirecting unauthenticated request to login", { path });
     return NextResponse.redirect(url);
   }
 
