@@ -22,6 +22,21 @@ export async function listPoints(projectId: string): Promise<Point[]> {
 }
 
 /**
+ * Count all technical points across projects
+ */
+export async function countAllPoints(): Promise<number> {
+  const supabase = supabaseBrowser();
+  const { count, error } = await supabase
+    .from("points")
+    .select("*", { count: "exact", head: true });
+  if (error) {
+    log.error("countAllPoints failed", { message: error.message });
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/**
  * Generate points for a given equipment using app-side rules and metadata,
  * then insert all missing points into Supabase.
  */

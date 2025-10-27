@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { FilePlus2, FolderPlus, UploadCloud } from "lucide-react";
+import { FolderPlus, UploadCloud } from "lucide-react";
 
 export default function QuickActions() {
   return (
@@ -17,11 +17,6 @@ export default function QuickActions() {
           <Button asChild>
             <Link href="/projects">
               <FolderPlus className="mr-2 size-4" /> Nouveau projet
-            </Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link href="#">
-              <FilePlus2 className="mr-2 size-4" /> Nouveau document
             </Link>
           </Button>
           <Button variant="outline" asChild>

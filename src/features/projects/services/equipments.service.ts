@@ -22,6 +22,45 @@ export async function listEquipments(projectId: string): Promise<Equipment[]> {
 
 // Points methods moved to point.service.ts
 
+/**
+ * Count all equipments across projects
+ */
+export async function countAllEquipments(): Promise<number> {
+  const supabase = supabaseBrowser();
+  const { count, error } = await supabase
+    .from("equipments")
+    .select("*", { count: "exact", head: true });
+  if (error) {
+    log.error("countAllEquipments failed", { message: error.message });
+    return 0;
+  }
+  return count ?? 0;
+}
+
+export type EquipmentsByType = Record<string, number>;
+
+/**
+ * Aggregate equipments count by type
+ */
+export async function groupEquipmentsByType(): Promise<EquipmentsByType> {
+  const supabase = supabaseBrowser();
+  const { data, error } = await supabase
+    .from("equipments")
+    // Fetch only the "type" column to reduce payload, we'll aggregate client-side
+    .select("type");
+  if (error) {
+    log.error("groupEquipmentsByType failed", { message: error.message });
+    return {};
+  }
+  const rows = (data as Array<{ type: string | null }>) ?? [];
+  const result: EquipmentsByType = {};
+  for (const r of rows) {
+    const key = r.type ?? "Inconnu";
+    result[key] = (result[key] ?? 0) + 1;
+  }
+  return result;
+}
+
 export type AddEquipmentInput = {
   projectId: string;
   type: string;

@@ -51,6 +51,78 @@ export async function listProjects(): Promise<Project[]> {
   return (data as Project[]) ?? [];
 }
 
+/**
+ * Count projects created within the last N days.
+ * Default 7 days.
+ */
+export async function countProjectsSince(days: number = 7): Promise<number> {
+  const supabase = supabaseBrowser();
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - days);
+  const iso = fromDate.toISOString();
+
+  const { count, error } = await supabase
+    .from("projects")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", iso);
+
+  if (error) {
+    log.error("countProjectsSince failed", { message: error.message, days });
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/**
+ * Return a time series of number of projects created per day
+ * over the given window (length days). Suitable for sparklines.
+ */
+export async function getProjectsCreatedTimeseries(
+  length: number
+): Promise<{ x: number; y: number; date: string }[]> {
+  const supabase = supabaseBrowser();
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - (length - 1));
+  const iso = fromDate.toISOString();
+
+  // Fetch only created_at in window
+  const { data, error } = await supabase
+    .from("projects")
+    .select("created_at")
+    .gte("created_at", iso)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    log.error("getProjectsCreatedTimeseries failed", {
+      message: error.message,
+      length,
+    });
+    return [];
+  }
+
+  const dates =
+    (data as Array<{ created_at: string }>)?.map((d) => d.created_at) ?? [];
+
+  // Bucket per day
+  const counts = new Map<string, number>();
+  for (const dt of dates) {
+    const day = new Date(dt);
+    // normalize to YYYY-MM-DD
+    const key = day.toISOString().slice(0, 10);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  // Build contiguous series from fromDate to today
+  const series: { x: number; y: number; date: string }[] = [];
+  const cur = new Date(fromDate);
+  for (let i = 0; i < length; i++) {
+    const key = cur.toISOString().slice(0, 10);
+    series.push({ x: i, y: counts.get(key) ?? 0, date: key });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return series;
+}
+
 export type CreateProjectInput = {
   name: string;
   client: string;

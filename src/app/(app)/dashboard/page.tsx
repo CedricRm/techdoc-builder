@@ -7,10 +7,12 @@ import ProjectsTable from "@/components/dashboard/ProjectsTable";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import QuickActions from "@/components/dashboard/QuickActions";
 import { useProjects } from "@/features/projects/hooks/useProjects";
-import { FolderKanban, FileText, TrendingUp, Database } from "lucide-react";
+import { useDashboardStats } from "@/features/projects/hooks/useDashboardStats";
+import { FolderKanban, PackageOpen, ListChecks, Layers3 } from "lucide-react";
 
 export default function DashboardPage() {
   const { items: allProjects } = useProjects();
+  const { stats, loading } = useDashboardStats();
 
   // Optionnel: const { data: stats } = await supabase.rpc("dashboard_stats");
   // Astuce: créer une RPC; sinon calcule côté client dans /projects/[id]
@@ -22,7 +24,7 @@ export default function DashboardPage() {
         <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
         <div className="flex items-center gap-2">
           <Button asChild>
-            <Link href="/projects">Nouveau projet</Link>
+            <Link href="/projects?create=1">Nouveau projet</Link>
           </Button>
         </div>
       </div>
@@ -38,25 +40,23 @@ export default function DashboardPage() {
               "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
           },
           {
-            label: "Documents",
-            value: 0,
-            delta: "+0%",
-            icon: FileText,
+            label: "Équipements",
+            value: loading ? "—" : stats.totalEquip,
+            icon: PackageOpen,
             accent:
               "bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400",
           },
           {
-            label: "Avancement moyen",
-            value: "—",
-            delta: "+0%",
-            icon: TrendingUp,
+            label: "Points techniques",
+            value: loading ? "—" : stats.totalPoints,
+            icon: ListChecks,
             accent:
               "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400",
           },
           {
-            label: "Stockage",
-            value: "4.2 / 10 GB",
-            icon: Database,
+            label: "Répartition par type",
+            value: loading ? "—" : Object.keys(stats.byType).length,
+            icon: Layers3,
             accent:
               "bg-sky-500/10 text-sky-600 dark:bg-sky-500/15 dark:text-sky-400",
           },

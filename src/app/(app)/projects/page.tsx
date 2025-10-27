@@ -2,6 +2,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,13 +47,18 @@ type SortKey =
   | "date_asc";
 
 export default function ProjectsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   // Create dialog form state
   const [form, setForm] = useState<FormState>({
     name: "",
     client: "",
     date: "",
   });
-  const [createOpen, setCreateOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(
+    () => searchParams.get("create") === "1"
+  );
+  // keep other states below
 
   // Delete confirmation dialog state
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -167,7 +173,18 @@ export default function ProjectsPage() {
 
       {/* Create project dialog trigger */}
       <div className="flex justify-end">
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <Dialog
+          open={createOpen}
+          onOpenChange={(open) => {
+            setCreateOpen(open);
+            // keep URL in sync
+            const sp = new URLSearchParams(window.location.search);
+            if (open) sp.set("create", "1");
+            else sp.delete("create");
+            const qs = sp.toString();
+            router.replace(`/projects${qs ? `?${qs}` : ""}`);
+          }}
+        >
           <DialogTrigger asChild>
             <Button>Nouveau projet</Button>
           </DialogTrigger>
@@ -298,7 +315,13 @@ export default function ProjectsPage() {
                   </TableRow>
                 ) : (
                   paged.map((p) => (
-                    <TableRow key={p.id}>
+                    <TableRow
+                      key={p.id}
+                      className="cursor-pointer"
+                      onClick={() =>
+                        (window.location.href = `/projects/${p.id}`)
+                      }
+                    >
                       <TableCell className="font-medium">{p.name}</TableCell>
                       <TableCell className="text-muted-foreground">
                         {p.client || "—"}
@@ -313,7 +336,10 @@ export default function ProjectsPage() {
                           return d ? formatDateFR(d) : "—";
                         })()}
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
+                      <TableCell
+                        className="text-right space-x-2"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Button asChild variant="outline" size="sm">
                           <Link href={`/projects/${p.id}`}>Ouvrir</Link>
                         </Button>

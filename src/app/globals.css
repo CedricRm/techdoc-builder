@@ -132,3 +132,12 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+/* Utility to align main content with the fixed sidebar width */
+@layer utilities {
+  @media (min-width: 1024px) {
+    .with-sidebar {
+      padding-left: var(--sidebar-width, 280px);
+    }
+  }
+}
