@@ -37,7 +37,7 @@
     "**/*.mts",
     ".next\\dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
-  ],
+, "src/utils/exportPdf.js", "src/utils/exportCsv.js", "src/utils/generation.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   Menu,
   LayoutGrid,
   FileText,
   FolderKanban,
   Settings,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +23,12 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -30,26 +39,49 @@ const links = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  // Read persisted state after mount to avoid SSR/CSR mismatch during hydration
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        setCollapsed(localStorage.getItem("sidebar:collapsed") === "1");
+      } catch {}
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Persist collapsed state
+  useEffect(() => {
+    try {
+      localStorage.setItem("sidebar:collapsed", collapsed ? "1" : "0");
+    } catch {}
+  }, [collapsed]);
 
   const NavLink = ({
     href,
     label,
     Icon,
+    isCollapsed = false,
   }: {
     href: string;
     label: string;
     Icon: React.ElementType;
+    isCollapsed?: boolean;
   }) => {
     const active = pathname === href || pathname.startsWith(href + "/");
     return (
       <Link
         href={href}
+        aria-label={isCollapsed ? label : undefined}
         className={cn(
           "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground",
+          isCollapsed && "justify-center",
           active ? "bg-accent text-accent-foreground" : "text-muted-foreground"
         )}
       >
-        <Icon className="size-4" /> {label}
+        <Icon className="size-4 shrink-0" />
+        {!isCollapsed && <span className="truncate">{label}</span>}
       </Link>
     );
   };
@@ -92,19 +124,60 @@ export default function Sidebar() {
 
       {/* Desktop: static sidebar */}
       <aside
-        className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:w-[260px] lg:border-r lg:bg-background lg:shadow-none"
+        className={cn(
+          "hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:border-r lg:bg-background lg:shadow-none lg:overflow-y-auto transition-[width] duration-200",
+          collapsed ? "lg:w-[72px]" : "lg:w-[280px]"
+        )}
         role="navigation"
         aria-label="Sidebar"
       >
         <div className="flex h-full flex-col gap-4 p-4">
-          <div className="mb-2 px-2 text-sm font-semibold">
-            <Link href="/dashboard">TechDoc‑Builder</Link>
+          <div
+            className={cn(
+              "mb-2 px-2 text-sm font-semibold flex items-center",
+              collapsed ? "justify-center" : "justify-between"
+            )}
+          >
+            {!collapsed && <Link href="/dashboard">TechDoc‑Builder</Link>}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={
+                collapsed
+                  ? "Déplier la barre latérale"
+                  : "Replier la barre latérale"
+              }
+              onClick={() => setCollapsed((v) => !v)}
+            >
+              {collapsed ? (
+                <ChevronsRight className="size-4" />
+              ) : (
+                <ChevronsLeft className="size-4" />
+              )}
+            </Button>
           </div>
-          <nav className="space-y-1">
-            {links.map(({ href, label, icon: Icon }) => (
-              <NavLink key={href} href={href} label={label} Icon={Icon} />
-            ))}
-          </nav>
+          <TooltipProvider disableHoverableContent>
+            <nav className="space-y-1">
+              {links.map(({ href, label, icon: Icon }) =>
+                collapsed ? (
+                  <Tooltip delayDuration={250} key={href}>
+                    <TooltipTrigger asChild>
+                      <NavLink
+                        href={href}
+                        label={label}
+                        Icon={Icon}
+                        isCollapsed
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="right">{label}</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <NavLink key={href} href={href} label={label} Icon={Icon} />
+                )
+              )}
+            </nav>
+          </TooltipProvider>
           <div className="mt-auto rounded-md border bg-muted p-3 text-xs text-muted-foreground">
             <p className="font-medium text-foreground">Espace utilisé</p>
             <div className="mt-2 h-2 w-full rounded-full bg-background">

@@ -31,14 +31,14 @@ export default function Topbar() {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="mx-auto flex max-w-7xl items-center gap-3 p-3 lg:p-4">
+      <div className="mx-auto flex w-full min-w-0 items-center gap-3 p-3 lg:p-4">
         {/* Breadcrumb simple */}
         <div className="hidden text-sm text-muted-foreground lg:block">
           Accueil / Dashboard
         </div>
 
         {/* Search */}
-        <div className="ml-auto flex-1 lg:ml-0 lg:flex-none">
+        <div className="ml-auto flex-1 min-w-0 lg:ml-0 lg:flex-none">
           <label className="relative block">
             <Input
               value={query}
