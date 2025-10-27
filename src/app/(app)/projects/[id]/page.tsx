@@ -10,6 +10,8 @@ import { useProjectDetail } from "@/features/projects/hooks/useProjectDetail";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import StatsCards from "@/components/dashboard/StatsCards";
+import { Layers3, ListChecks, PackageOpen } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -100,9 +102,15 @@ export default function ProjectDetail() {
       {project && (
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-xl font-semibold">{project.name}</h1>
+            <h1 className="text-xl font-semibold tracking-tight">
+              {project.name}
+            </h1>
             <p className="text-sm text-muted-foreground">
-              {project.client} • {project.date}
+              {project.client || "—"} •
+              {(project as unknown as { project_date?: string | null })
+                .project_date ||
+                project.date ||
+                "—"}
             </p>
           </div>
           <div className="flex gap-2">
@@ -124,6 +132,33 @@ export default function ProjectDetail() {
           </div>
         </header>
       )}
+
+      {/* KPI */}
+      <StatsCards
+        items={[
+          {
+            label: "Équipements",
+            value: stats.totalEquip,
+            icon: PackageOpen,
+            accent:
+              "bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400",
+          },
+          {
+            label: "Points",
+            value: stats.totalPoints,
+            icon: ListChecks,
+            accent:
+              "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
+          },
+          {
+            label: "Types distincts",
+            value: Object.keys(stats.byType).length,
+            icon: Layers3,
+            accent:
+              "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400",
+          },
+        ]}
+      />
 
       <section className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">

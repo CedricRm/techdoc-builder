@@ -14,14 +14,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   if (!user) redirect("/login");
 
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[auto_minmax(0,1fr)] bg-gray-50 text-gray-900">
-      {/* Sidebar (collapsible on mobile) */}
+    <div className="flex min-h-dvh  bg-background text-foreground">
       <Sidebar />
 
-      {/* Main */}
-      <div className="flex min-h-dvh flex-col min-w-0">
+      {/* Main column */}
+      <div className="flex min-h-dvh flex-col w-full! min-w-0!">
         <Topbar />
-        <main className="flex-1 p-4 lg:p-6 min-w-0">{children}</main>
+        <main className="flex-1 p-4 lg:p-6 w-full min-w-0">{children}</main>
       </div>
     </div>
   );

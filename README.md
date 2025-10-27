@@ -16,6 +16,29 @@
 
 ---
 
+## 📊 Tableau de bord (Dashboard)
+
+Le dashboard a été modernisé avec TailwindCSS et les composants shadcn/ui pour un SaaS de gestion de projets :
+
+- Cartes KPI (Total projets, Documents, Avancement, Stockage)
+- Graphique de tendance (sparkline) sur 7/30 jours sans dépendances externes
+- Flux d’activité récent (exemples) prêt à connecter à Supabase Realtime
+- Tableau des projets récents avec badges et états de chargement
+- Actions rapides (Nouveau projet, Nouveau document, Import)
+
+Fichiers principaux :
+
+- `src/app/(app)/dashboard/page.tsx` — composition générale du dashboard
+- `src/components/dashboard/StatsCards.tsx` — cartes KPI
+- `src/components/dashboard/TrendsChart.tsx` — sparkline SVG avec Tabs
+- `src/components/dashboard/ProjectsTable.tsx` — table shadcn des projets
+- `src/components/dashboard/ActivityFeed.tsx` — flux d’activité
+- `src/components/dashboard/QuickActions.tsx` — boutons d’actions
+
+Astuce: pour alimenter les KPI/graphes avec de vraies données, exposez une RPC Supabase (ex: `dashboard_stats`) ou un service côté `src/server/` et branchez les hooks correspondants.
+
+---
+
 ## 🏗️ Structure du projet
 
 techdoc-builder/

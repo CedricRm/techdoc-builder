@@ -74,8 +74,10 @@ export default function Sidebar() {
       <Link
         href={href}
         aria-label={isCollapsed ? label : undefined}
+        aria-current={active ? "page" : undefined}
+        data-active={active ? "true" : "false"}
         className={cn(
-          "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground",
+          "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
           isCollapsed && "justify-center",
           active ? "bg-accent text-accent-foreground" : "text-muted-foreground"
         )}
